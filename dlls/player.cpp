@@ -1633,7 +1633,7 @@ void CBasePlayer::PlayerUse ( void )
 	if ( ! ((pev->button | m_afButtonPressed | m_afButtonReleased) & IN_USE) )
 		return;
 
-	if ( (pev->button & IN_USE) && (pev->effects == EF_NODRAW) )
+	if ( (pev->button & IN_USE) && (pev->flags & FL_SPECTATOR) )
 		return;
 
 	// Hit Use on a train?
