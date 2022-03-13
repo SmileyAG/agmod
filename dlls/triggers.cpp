@@ -1866,6 +1866,10 @@ void CTriggerPush :: Touch( CBaseEntity *pOther )
 //
 //
 
+
+#define SF_TELEPORT_KEEP_ANGLES 256
+#define SF_TELEPORT_KEEP_VELOCITY 512
+
 void CBaseTrigger :: TeleportTouch( CBaseEntity *pOther )
 {
 	entvars_t* pevToucher = pOther->pev;
@@ -1911,15 +1915,22 @@ void CBaseTrigger :: TeleportTouch( CBaseEntity *pOther )
 	
 	UTIL_SetOrigin( pevToucher, tmp );
 
-	pevToucher->angles = pentTarget->v.angles;
-
-	if ( pOther->IsPlayer() )
+	if ( !( pev->spawnflags & SF_TELEPORT_KEEP_ANGLES ) )
 	{
-		pevToucher->v_angle = pentTarget->v.angles;
+		pevToucher->angles = pentTarget->v.angles;
+
+		if ( pOther->IsPlayer() )
+		{
+			pevToucher->v_angle = pentTarget->v.angles;
+		}
+
+		pevToucher->fixangle = TRUE;
 	}
 
-	pevToucher->fixangle = TRUE;
-	pevToucher->velocity = pevToucher->basevelocity = g_vecZero;
+	if ( !( pev->spawnflags & SF_TELEPORT_KEEP_VELOCITY ) )
+	{
+		pevToucher->velocity = pevToucher->basevelocity = g_vecZero;
+	}
 }
 
 
