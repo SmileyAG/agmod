@@ -1869,6 +1869,7 @@ void CTriggerPush :: Touch( CBaseEntity *pOther )
 
 #define SF_TELEPORT_KEEP_ANGLES 256
 #define SF_TELEPORT_KEEP_VELOCITY 512
+#define SF_TELEPORT_REDIRECT_VELOCITY_WITH_YAW_DESTINATION 1024
 
 void CBaseTrigger :: TeleportTouch( CBaseEntity *pOther )
 {
@@ -1930,6 +1931,31 @@ void CBaseTrigger :: TeleportTouch( CBaseEntity *pOther )
 	if ( !( pev->spawnflags & SF_TELEPORT_KEEP_VELOCITY ) )
 	{
 		pevToucher->velocity = pevToucher->basevelocity = g_vecZero;
+	}
+
+	if ( ( pev->spawnflags & SF_TELEPORT_REDIRECT_VELOCITY_WITH_YAW_DESTINATION ) && ( pev->spawnflags & SF_TELEPORT_KEEP_VELOCITY ) )
+	{
+		int xy_vel_before_teleport = std::round(std::hypot(pevToucher->velocity.x, pevToucher->velocity.y));
+		int yaw_destination = pentTarget->v.angles.y;
+		switch (yaw_destination)
+		{
+			case 0:
+				pevToucher->velocity.x = pevToucher->basevelocity.x = xy_vel_before_teleport / 2;
+				pevToucher->velocity.y = pevToucher->basevelocity.y = 0;
+				break;
+			case 90:
+				pevToucher->velocity.y = pevToucher->basevelocity.y = xy_vel_before_teleport / 2;
+				pevToucher->velocity.x = pevToucher->basevelocity.x = 0;
+				break;
+			case 180:
+				pevToucher->velocity.x = pevToucher->basevelocity.x = -xy_vel_before_teleport / 2;
+				pevToucher->velocity.y = pevToucher->basevelocity.y = 0;
+				break;
+			case 270:
+				pevToucher->velocity.y = pevToucher->basevelocity.y = -xy_vel_before_teleport / 2;
+				pevToucher->velocity.x = pevToucher->basevelocity.x = 0;
+				break;
+		}
 	}
 }
 
