@@ -217,6 +217,7 @@ void CGauss::SecondaryAttack()
 		if ( m_fInAttack != 0 )
 		{
 			EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro4.wav", 1.0, ATTN_NORM, 0, 80 + RANDOM_LONG(0,0x3f));
+			SendStopEvent(true);
 			SendWeaponAnim( GAUSS_IDLE );
 			m_fInAttack = 0;
 		}
@@ -337,6 +338,9 @@ void CGauss::SecondaryAttack()
 			m_fInAttack = 0;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.0;
 			m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 1.0;
+
+			SendStopEvent(false);
+
 				
 #ifndef CLIENT_DLL
 			spgausscharging.value = 0.0f;
@@ -670,6 +674,18 @@ void CGauss::WeaponIdle( void )
 		//-- Martin Webrant	
 		
 	}
+}
+
+void CGauss::SendStopEvent(bool sendToHost) // by Solokiller
+{
+	int flags = FEV_RELIABLE | FEV_GLOBAL;
+
+	if (!sendToHost)
+	{
+		flags |= FEV_NOTHOST;
+	}
+
+	PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usGaussFire, 0.01, m_pPlayer->pev->origin, m_pPlayer->pev->angles, 0.0, 0.0, 0, 0, 0, 1);
 }
 
 
