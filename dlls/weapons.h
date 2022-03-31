@@ -733,7 +733,7 @@ class CRpgRocket : public CGrenade
 {
 public:
 
-	~CRpgRocket() override;
+	~CRpgRocket();
 
 	int		Save( CSave &save );
 	int		Restore( CRestore &restore );
