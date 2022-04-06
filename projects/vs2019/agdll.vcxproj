@@ -254,6 +254,7 @@
     <ClCompile Include="..\..\dlls\agvote.cpp" />
     <ClCompile Include="..\..\dlls\agwallhack.cpp" />
     <ClCompile Include="..\..\dlls\agflood.cpp" />
+    <ClCompile Include="..\..\dlls\genericitem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\const.h" />
