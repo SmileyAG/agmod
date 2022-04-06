@@ -257,6 +257,7 @@
     <ClCompile Include="..\..\dlls\agflood.cpp" />
     <ClCompile Include="..\..\dlls\cvar.cpp" />
     <ClCompile Include="..\..\dlls\agrandom.cpp" />
+    <ClCompile Include="..\..\dlls\genericitem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\const.h" />
