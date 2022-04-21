@@ -1353,7 +1353,6 @@ class CEnvModel : public CBaseAnimating
 	void Precache( void );
 	void EXPORT Think( void );
 	void KeyValue( KeyValueData *pkvd );
-	STATE GetState( void );
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	virtual int	ObjectCaps( void ) { return CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
@@ -1412,9 +1411,7 @@ void CEnvModel :: Spawn( void )
 {
 	Precache();
 	SET_MODEL( ENT(pev), STRING(pev->model) );
-	UTIL_SetOrigin(this, pev->origin);
-
-//	UTIL_AssignOrigin(this, pev->oldorigin); //AJH - WTF is this here for?
+	UTIL_SetOrigin(pev, pev->origin);
 
 	if (pev->spawnflags & SF_ENVMODEL_SOLID)
 	{
@@ -1432,20 +1429,12 @@ void CEnvModel :: Spawn( void )
 
 	SetSequence();
 	
-	SetNextThink( 0.1 );
+	pev->nextthink = gpGlobals->time + 0.1;
 }
 
 void CEnvModel::Precache( void )
 {
 	PRECACHE_MODEL( (char *)STRING(pev->model) );
-}
-
-STATE CEnvModel::GetState( void )
-{
-	if (pev->spawnflags & SF_ENVMODEL_OFF)
-		return STATE_OFF;
-	else
-		return STATE_ON;
 }
 
 void CEnvModel::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
@@ -1458,7 +1447,7 @@ void CEnvModel::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 			pev->spawnflags |= SF_ENVMODEL_OFF;
 
 		SetSequence();
-		SetNextThink( 0.1 );
+		pev->nextthink = gpGlobals->time + 0.1;
 	}
 }
 
@@ -1466,15 +1455,8 @@ void CEnvModel::Think( void )
 {
 	int iTemp;
 
-//	ALERT(at_console, "env_model Think fr=%f\n", pev->framerate);
-
 	StudioFrameAdvance ( ); // set m_fSequenceFinished if necessary
 
-//	if (m_fSequenceLoops)
-//	{
-//		SetNextThink( 1E6 );
-//		return; // our work here is done.
-//	}
 	if (m_fSequenceFinished && !m_fSequenceLoops)
 	{
 		if (pev->spawnflags & SF_ENVMODEL_OFF)
@@ -1484,12 +1466,6 @@ void CEnvModel::Think( void )
 
 		switch (iTemp)
 		{
-//		case 1: // loop
-//			pev->animtime = gpGlobals->time;
-//			m_fSequenceFinished = FALSE;
-//			m_flLastEventCheck = gpGlobals->time;
-//			pev->frame = 0;
-//			break;
 		case 2: // change state
 			if (pev->spawnflags & SF_ENVMODEL_OFF)
 				pev->spawnflags &= ~SF_ENVMODEL_OFF;
@@ -1501,7 +1477,7 @@ void CEnvModel::Think( void )
 			return;
 		}
 	}
-	SetNextThink( 0.1 );
+	pev->nextthink = gpGlobals->time + 0.1;
 }
 
 void CEnvModel :: SetSequence( void )
