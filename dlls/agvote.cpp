@@ -84,6 +84,7 @@ bool AgVote::HandleCommand(CBasePlayer* pPlayer)
         return true;
     }
 
+    /*
     if (FStrEq(CMD_ARGV(0), "aglistvotes"))
     {
         for (int i = 0; i < sizeof(s_szVotes) / sizeof(s_szVotes[0]); i++)
@@ -93,6 +94,7 @@ bool AgVote::HandleCommand(CBasePlayer* pPlayer)
 
         return true;
     }
+    */
 
     //Atleast two players.
     int iPlayers = 0;
